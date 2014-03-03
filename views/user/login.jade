@@ -1,0 +1,16 @@
+extends ../layout
+
+block main
+	header.content
+		h2 Login
+
+	form#login(method="post", action="/login")
+		p
+			input#login-name(type="text", name="loginName", placeholder="full name or email", required, autofocus)
+		p
+			input#login-password(type="password", name="password", placeholder="password", required)
+		p
+			input.submit(type="submit", value="Login")
+			
+		p.error
+			

@@ -1,0 +1,23 @@
+extends ../layout
+
+block main
+	header.content
+		h2 Strategies
+
+	div.lessons
+		table#lesson-list.table.table-striped.table-bordered
+			thead
+				th.title(title="Click to sort") Title <span class="glyphicon glyphicon-sort"></span>
+				th.script Script
+				th.script-status Status
+				th.video Video
+				th.video-status Status
+			tbody
+				if lessons
+					each lesson in lessons
+						tr(data-id="#{lesson.id}", data-name="#{lesson.name}")
+							td.lesson= lesson.name
+							td.script List of script people
+							td.status= lesson.scriptStatus 
+							td.video List of video people
+							td.videoStatus= lesson.videoStatus 
