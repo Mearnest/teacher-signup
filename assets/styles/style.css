@@ -125,6 +125,15 @@ span.error {
 	padding-left: 10px;
 }
 
+td.change-status {
+	cursor: pointer;
+}
+
+	a.cancel {
+		display: block;
+		margin-top: 5px;
+	}
+
 /*		User Profile		*/
 div.info {
 	width: 25%;

@@ -57,6 +57,11 @@ module.exports.routes = {
 		action: 'profile'
 	},
 	
+	'/lesson/list': {
+		controller: 'lesson',
+		action: 'list'
+	},
+	
 	'/lesson/signup/:id': {
 		controller: 'lesson',
 		action: 'signup'

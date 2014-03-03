@@ -142,5 +142,46 @@ module.exports = {
 		}
 	},
 	
+	// List of all lessons for repopulating lesson list when user logs in or out.
+	// This is to determine what Signup buttons to show (all on logout, some on log in).
+	list: function(req, res) {
+		var user = req.session.user;
+		var lessonList = [];
+		var lesson;
+		var scriptList;
+		var videoList;
+		
+		Lesson.find().done(function(err, lessons) {
+			if (err) {
+				res.json({ "error": err });
+			}
+			
+			lessonList = lessons;
+			if (user) {
+				for (var i = 0; i < lessonList.length; i++) {
+					lesson = lessonList[i];
+					scriptList = lesson.scriptList;
+					videoList = lesson.videoList;
+					
+					for (var j = 0; j < scriptList.length; j++) {
+						// If the user is in the list, they will not have a signup button.
+						if (user.fullName == scriptList[j].user) {
+							lesson.noScriptSignup = true;
+						}
+					}
+					
+					for (var j = 0; j < videoList.length; j++) {
+						// If the user is in the list, they will not have a signup button.
+						if (user.fullName == videoList[j].user) {
+							lesson.noVideoSignup = true;
+						}
+					}
+				}
+			}
+			
+			res.json({ "lessons": lessonList });
+		});
+	},
+	
 	_config: {}
 };
