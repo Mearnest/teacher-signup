@@ -60,7 +60,7 @@ block main
 										each person in lesson.scriptList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.scriptList, user)
+										if lesson.scriptStatus != "Completed" && !userInList(lesson.scriptList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 											span.error
 									td.script-status= lesson.scriptStatus 
@@ -68,7 +68,7 @@ block main
 										each person in lesson.videoList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.videoList, user)
+										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 											span.error
 									td.video-status= lesson.videoStatus 
@@ -108,7 +108,7 @@ block main
 										each person in lesson.scriptList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.scriptList, user)
+										if lesson.scriptStatus != "Completed" &&!userInList(lesson.scriptList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 											span.error
 									td.script-status= lesson.scriptStatus 
@@ -116,7 +116,7 @@ block main
 										each person in lesson.videoList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.videoList, user)
+										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 											span.error
 									td.video-status= lesson.videoStatus 
@@ -150,14 +150,14 @@ block main
 										each person in lesson.scriptList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.scriptList, user)
+										if lesson.scriptStatus != "Completed" &&!userInList(lesson.scriptList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 									td.script-status= lesson.scriptStatus 
 									td.video
 										each person in lesson.videoList
 											| #{person.user} at #{person.school}
 											br
-										if !userInList(lesson.videoList, user)
+										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
 									td.video-status= lesson.videoStatus 
 			

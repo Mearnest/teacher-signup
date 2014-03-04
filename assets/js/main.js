@@ -165,7 +165,7 @@ $(function() {
 					for (i = 0; i < scripts.length; i++) {
 						newHtml += scripts[i].user + " at " + scripts[i].school + "<br>";
 					}
-					if (!lesson.noScriptSignup) {
+					if (lesson.scriptStatus != "Completed" && !lesson.noScriptSignup) {
 						newHtml += '<a href="#signup" data-type="script" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup</a>';
 					}
 					scriptCell.html(newHtml);
@@ -174,7 +174,7 @@ $(function() {
 					for (i = 0; i < videos.length; i++) {
 						newHtml += videos[i].user + " at " + videos[i].school + "<br>";
 					}
-					if (!lesson.noVideoSignup) {
+					if (lesson.videoStatus != "Completed" && !lesson.noVideoSignup) {
 						newHtml += '<a href="#signup" data-type="video" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup</a>';
 					}
 					videoCell.html(newHtml);
@@ -207,6 +207,12 @@ $(function() {
 			type: "PUT",
 			data: update,
 			success: function(data) {
+				console.log(status);
+				if (status === "Completed") {  // no need to signup, so remove it
+					var signupCell = cell.prev();
+					var newHtml = signupCell .html().replace(/\<a href.*\<\/a\>/, "");
+					signupCell.html(newHtml);
+				}
 				cell.html(status);
 				cell.click(addSelectStatus);  // rebind select status
 			}
