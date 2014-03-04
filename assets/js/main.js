@@ -350,8 +350,9 @@ $(function() {
 	$("form.login, form.signup").submit(function(event) {
 		event.preventDefault();
 		var path = $(this).attr("action");
+		var form = $(this);
 		
-		$.post(path, $(this).serialize(), function(data) {
+		$.post(path, form.serialize(), function(data) {
 			if (data.error) {
 				$("p.error").html(data.error);
 			}
@@ -371,6 +372,7 @@ $(function() {
 					$("#register").hide();
 					$("#profile").show();
 					$("section").hide();
+					form[0].reset();  // html reset fields in case user logs out and wishes to reuse form.
 					$("section.lessons").show();
 				});
 			}

@@ -21,6 +21,7 @@ module.exports = {
 		fullName: {
 			type: 'string',
 			required: true,
+			unique: true,
 			minLength: 5
 		},
 		email: {

@@ -60,7 +60,10 @@ module.exports = {
 			var account; // new user
 			
 			// Make sure the passwords match
-			if (password === confirmPassword) {
+			if (password.length < 3) {
+				res.json({ "error": "Password must be at least 3 characters." });
+			}
+			else if (password === confirmPassword) {
 				// Check that the user does not already exist.
 				User.findOne({ "fullName": fullName }, function(err, user) {
 					if (err) {
@@ -70,20 +73,29 @@ module.exports = {
 						res.json ({ "error": "User " + fullName + " already exists." });
 					}
 					else {
-						// Generate the password hash and account object to create a new user.
-						password = hasher.generate(password);
-						account = { "firstName": firstName, "lastName": lastName, "fullName": fullName, "url": url, "role": role, "school": school, "email": email, "password": password };
-						
-						User.create(account)
-							.done(function(err, user) {
-								if (err) {
-									res.json({ "error": err });
-								} 
-								else {
-									setUserSession(user, req);
-									res.json({ "user": user, "sesson": req.session });
-								}
-							});
+						// Email has to be unique as well.
+						User.findOne({ "email": email }, function(err, user) {
+							if (err) res.json({ "error": err });
+							else if (user) {
+								res.json ({ "error": "There is already a user with email " + email + "." });
+							}
+							else {
+								// Generate the password hash and account object to create a new user.
+								password = hasher.generate(password);
+								account = { "firstName": firstName, "lastName": lastName, "fullName": fullName, "url": url, "role": role, "school": school, "email": email, "password": password };
+								
+								User.create(account)
+									.done(function(err, user) {
+										if (err) {
+											res.json({ "error": err });
+										} 
+										else {
+											setUserSession(user, req);
+											res.json({ "user": user, "sesson": req.session });
+										}
+									});
+							}
+						});
 					}
 				});
 			}
