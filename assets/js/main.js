@@ -16,19 +16,19 @@ $(function() {
 			$.each(data.lessonsCreated, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
 			});
-			$(".info.lessons-created").html(newHTML);
+			$(".info.lessons-created > .content").html(newHTML);
 			
 			newHTML = "";
 			$.each(data.scripts, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
 			});
-			$(".info.scripts").html(newHTML);
+			$(".info.scripts > .content").html(newHTML);
 			
 			newHTML = "";
 			$.each(data.videos, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
 			});
-			$(".info.videos").html(newHTML);
+			$(".info.videos > .content").html(newHTML);
 		});
 	}
 	
@@ -334,6 +334,12 @@ $(function() {
 			refreshLessonList(function() {
 				$("td.script-status, td.video-status").unbind("click");
 				$("td.script-status, td.video-status").removeClass("change-status");
+				
+				// Clear profile lists
+				$(".info.lessons-created > .content").html("");
+				$(".info.scripts > .content").html("");
+				$(".info.videos > .content").html("");
+				
 				$("#profile").hide();
 				$("#register").show();
 				$("section").hide();
@@ -361,10 +367,10 @@ $(function() {
 			}
 			else {
 				user = data.user;
-				setUserFields();
 				
 				refreshLessonList(function() {
 					bindAdminStatusChange();
+					setUserFields();
 					
 					try {
 						// Mayber ther eis a better way to test if a dialog has been instantiated?
