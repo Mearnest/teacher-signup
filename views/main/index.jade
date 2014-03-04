@@ -9,6 +9,9 @@ block head
 			var account = null;
 
 block main
+	div.popup
+		//- Display popup messages such as errors
+	
 	section.content.lessons
 		header.content
 			h2 List of Lessons
@@ -41,9 +44,11 @@ block main
 						td.title
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.video-status
 						
 					if lessons
@@ -57,6 +62,7 @@ block main
 											br
 										if !userInList(lesson.scriptList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
 										each person in lesson.videoList
@@ -64,6 +70,7 @@ block main
 											br
 										if !userInList(lesson.videoList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+											span.error
 									td.video-status= lesson.videoStatus 
 					
 					
@@ -85,9 +92,11 @@ block main
 						td.title
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.video-status
 						
 					if lessons
@@ -101,6 +110,7 @@ block main
 											br
 										if !userInList(lesson.scriptList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
 										each person in lesson.videoList
@@ -108,6 +118,7 @@ block main
 											br
 										if !userInList(lesson.videoList, user)
 											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+											span.error
 									td.video-status= lesson.videoStatus 
 									
 			table.lesson-list.applications.table.table-bordered.table-striped
@@ -123,9 +134,11 @@ block main
 						td.title
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							span.error
 						td.video-status
 						
 					if lessons

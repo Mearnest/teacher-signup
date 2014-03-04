@@ -89,6 +89,9 @@ $(function() {
 			});
 		}
 		else {  // Redirect to login
+			$("div.popup").html('<h3>In order to add a lesson, you need to be logged in. If you do not have an account yet, signup for one in the upper right hand corner.</h3>');
+			$("div.popup").dialog({ width: '600', title: "Login or Signup" });
+			
 			$("section").hide();
 			$("section.login").show();
 		}
@@ -132,6 +135,9 @@ $(function() {
 			});
 		}
 		else {  // Redirect to login
+			$("div.popup").html('<h3>In order to signup to produce a lesson script or video, you need to be logged in. If you do not have an account yet, signup for one in the upper right hand corner.</h3>');
+			$("div.popup").dialog({ width: '600', title: "Login or Signup" });
+			
 			$("section").hide();
 			$("section.login").show();
 		}
@@ -139,7 +145,7 @@ $(function() {
 	
 	// When Logging in our out, need to refresh the list of lessons.
 	// This is so the right signup buttons show up.
-	function refreshLessonList() {
+	function refreshLessonList(callback) {
 		$.get("/lesson/list", function(data) {
 			if (data.error) {
 				console.log("error: " + data.error);
@@ -168,7 +174,7 @@ $(function() {
 					for (i = 0; i < videos.length; i++) {
 						newHtml += videos[i].user + " at " + videos[i].school + "<br>";
 					}
-					if (!lesson.noScriptSignup) {
+					if (!lesson.noVideoSignup) {
 						newHtml += '<a href="#signup" data-type="video" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup</a>';
 					}
 					videoCell.html(newHtml);
@@ -176,6 +182,7 @@ $(function() {
 				
 				// Reassign signup events.
 				$("a.signup").click(lessonSignup);
+				callback(); // show/hide relevant sections and divs
 			}
 		});
 	}
@@ -321,15 +328,14 @@ $(function() {
 		
 		$.get("/logout", function(data) {
 			user = null;
-			refreshLessonList();
-			
-			$("td.script-status, td.video-status").unbind("click");
-			$("td.script-status, td.video-status").removeClass("change-status");
-			
-			$("section").hide();
-			$("#profile").hide();
-			$("#register").show();
-			$("section.lessons").show();
+			refreshLessonList(function() {
+				$("td.script-status, td.video-status").unbind("click");
+				$("td.script-status, td.video-status").removeClass("change-status");
+				$("#profile").hide();
+				$("#register").show();
+				$("section").hide();
+				$("section.lessons").show();
+			});
 		});
 	}); 
 	
@@ -352,13 +358,21 @@ $(function() {
 			else {
 				user = data.user;
 				setUserFields();
-				refreshLessonList();
-				bindAdminStatusChange();
 				
-				$("#register").hide();
-				$("#profile").show();
-				$("section").hide();
-				$("section.lessons").show();
+				refreshLessonList(function() {
+					bindAdminStatusChange();
+					
+					try {
+						// Mayber ther eis a better way to test if a dialog has been instantiated?
+						$("div.popup").dialog("close");
+					}
+					catch(err) {  /* do noting */ }
+					
+					$("#register").hide();
+					$("#profile").show();
+					$("section").hide();
+					$("section.lessons").show();
+				});
 			}
 		});
 	});

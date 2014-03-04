@@ -134,6 +134,10 @@ td.change-status {
 		margin-top: 5px;
 	}
 
+div.popup {
+	display: none;
+}
+	
 /*		User Profile		*/
 div.info {
 	width: 25%;
