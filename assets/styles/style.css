@@ -1,0 +1,152 @@
+html, body {
+	height: 100%;
+}
+
+body {
+	font-size: 16px;
+	overflow-y: scroll;
+}
+
+h1 {
+	font-size: 30px;
+}
+
+h2 {
+	font-size: 24px;
+}
+
+h2.pull-left, h2.pull-right {
+	display: inline;
+}
+
+a:link {
+	text-decoration: none;
+}
+
+::-webkit-input-placeholder {
+   font-weight: 700;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   font-weight: 700;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   font-weight: 700;
+}
+
+:-ms-input-placeholder {  
+   font-weight: 700;
+}
+
+placeholder {
+	 font-weight: 700;
+}
+
+#wrapper {
+	min-height: 100%;
+	margin-bottom: -80px; 
+}
+
+	footer, #wrapper:after {
+		height: 80px;
+	}
+
+	header.page {
+		height: 100px;
+	}
+	
+		#register, #profile {
+			font-size: 24px;
+			padding-top: 25px;
+			display: none;
+		}
+
+	section.content {
+		min-height: 70vh;
+		margin-bottom: 30px;
+		padding: 5px 20px 20px;
+		background-color: #fff;
+		border-radius: 20px;
+		box-shadow: 3px 3px 3px 3px #ccc;
+	}
+
+		header.content {
+			border-bottom: 1px solid #eee;
+			margin-bottom: 20px;
+		}
+
+footer {
+	width:100%;
+	/* background-color: #7fc8e4; */
+}
+
+section.login, section.signup, section.profile {
+	display: none;
+}
+
+/*		Lesson List Tables		*/
+th.lesson-type, th.title, td.title {
+	width: 25%;
+}
+
+th.status, td.status, td.script-status, td.video-status {
+	width: 12%;
+}
+
+th.lesson-type {
+	font-weight: 700;
+	color: #fff;
+	cursor: pointer;
+}
+
+th.principles {
+	background-color: #BC3835;
+}
+
+th.strategies {
+	background-color: #5D417E;
+}
+
+th.applications {
+	background-color: #2787A0;
+}
+
+tr.clone {
+	display: none;
+}
+
+p.error {
+	color: red;
+	font-weight: 700;
+}
+
+span.error {
+	color: #fff;
+	padding-left: 10px;
+}
+
+td.change-status {
+	cursor: pointer;
+}
+
+	a.cancel {
+		display: block;
+		margin-top: 5px;
+	}
+
+div.popup {
+	display: none;
+}
+	
+/*		User Profile		*/
+div.info {
+	width: 25%;
+	padding: 0 20px;
+}
+
+	div.info header {
+		font-weight: 700;
+		border-bottom: 1px dashed;
+	}
+

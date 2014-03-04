@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		//- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		meta(http-equiv="X-UA-Compatible', content='IE=edge, chrome=1")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+		meta(name="apple-mobile-web-app-capable", content="yes")
+		link(rel="icon", type="image/png", href="/images/favicon.png")
+		
+		title Teacher Signup
+		
+		link(rel="stylesheet", href="/styles/ui-lightness/jquery-ui.custom.min.css")
+		link(href="/styles/bootstrap.min.css", rel="stylesheet")
+		link(href="/styles/style.css", rel="stylesheet")
+		
+		script(src="/js/jquery.min.js")
+		script(src="/js/jquery.tablesorter.min.js")
+		script(src="/js/jquery-ui.custom.min.js")
+		script(src="/js/main.js")
+		
+		//- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
+		//- WARNING: Respond.js doesn't work if you view the page via file:
+		// [if lt IE 9]
+			script(src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js")
+			script(src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js")
+		// [endif]
+		
+		block head
+			//- Add addition stylesheets, scripts, etc.
+		
+	body
+		#wrapper.container
+			header.page
+				.pull-left
+					h1.title 
+						a(href="/")
+							span.glyphicon.glyphicon-home
+							| &nbsp; Teacher Signup System
+				
+				#register.pull-right
+					a(href="/login") Login 
+					| &nbsp; | &nbsp;
+					a(href="/signup") Signup
+					
+				#profile.pull-right
+					a(href="/profile") 
+						span.glyphicon.glyphicon-user
+						| &nbsp; My Account
+			
+			block main
+					
+		footer
+			.container
+				block footer
