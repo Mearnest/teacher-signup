@@ -1,2 +1,2 @@
 # Teacher Lesson Signup
-### Iteration 1 / SAP
+### Iteration 1 / SPA
