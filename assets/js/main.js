@@ -15,23 +15,20 @@ $(function() {
 			
 			$.each(data.lessonsCreated, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
-				
 			});
-			$(".info.lessons-created").append(newHTML);
-			newHTML = "";
+			$(".info.lessons-created").html(newHTML);
 			
+			newHTML = "";
 			$.each(data.scripts, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
-				
 			});
-			$(".info.scripts").append(newHTML);
-			newHTML = "";
+			$(".info.scripts").html(newHTML);
 			
+			newHTML = "";
 			$.each(data.videos, function(index, lesson) {
 				newHTML += lesson.title + " " + lesson.type + "<br>";
-				
 			});
-			$(".info.videos").append(newHTML);
+			$(".info.videos").html(newHTML);
 		});
 	}
 	
