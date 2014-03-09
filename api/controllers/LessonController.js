@@ -17,87 +17,31 @@
 
 // utility functions
 function lessonTitleToURL(title) {
-	var url = title.replace(/\s+/g, '_').replace(/\.|'/g, '').toLowerCase();
+	var url = title.replace(/\s+/g, '_').replace(/\.|'/g, '').replace(/\(|\)/g, '').toLowerCase();
 	return url;
 }
 
-function userInList(list, user) {
-	for (var i=0; i<list.length; i++) {
-		if (list[i].user == user.fullName) {
-			return true;
-		}
-	}
-	return false;
+function createApplication(lesson, newLesson, res) {
+	Lesson.create(newLesson)
+		.done(function(err, application) {
+			if (err) {
+				res.json({ "error": err });
+			} 
+			else {
+				res.json({ "lesson": lesson, "application": application });
+			}
+		});
 }
  
 module.exports = {
-	// Signup for the script or video part of the lesson.
-	signup: function(req, res) {
-		if (req.method == "PUT") {
-			if (req.session.user) {
-				var user = req.session.user;
-				var id = req.param("id");
-				var signupType = req.param("signupType");
-				
-				Lesson.findOne({ "id": id }, function(err, lesson) {
-					if (err) {
-						res.json({ "error": err });
-					}
-					else if (lesson) {
-						if (signupType == "script") {
-							if (userInList(lesson.scriptList, user) == false) {
-								lesson.scriptList.push({ "user": user.fullName, "school": user.school });
-								lesson.scriptStatus = "In Progress";
-								
-								lesson.save(function(err) {
-									if (err) {
-										res.json({ "error": err });
-									}
-									else {
-										res.json(lesson);
-									}
-								});
-							}
-							else {
-								res.json({ "error": "User " + user.fullName + " is already signed up for " + lesson.title + " " + signupType + "." });
-							}
-						}
-						else {
-							if (userInList(lesson.videoList, user) == false) {
-								lesson.videoList.push({ "user": user.fullName, "school": user.school });
-								lesson.videoStatus = "In Progress";
-								
-								lesson.save(function(err) {
-									if (err) {
-										res.json({ "error": err });
-									}
-									else {
-										res.json(lesson);
-									}
-								});
-								
-							}
-							else {
-								res.json({ "error": "User " + user.fullName + " is already signed up for " + lesson.title + " " + signupType + "." });
-							}
-						}
-					}
-					else {
-						res.json({ "error": "Lesson " + id + " not found." });
-					}
-				});
-			}
-		}
-	},
-	
 	create: function(req, res) {
-		if (req.session.user) {
-			var user = req.session.user;
-			var title = req.param("title");
+		var user = req.session.user;
+		if (user && user.role == "Teacher" || user.role == "Admin") {
+			var title = req.param("title").trim();
 			var url = lessonTitleToURL(title);
 			var lessonType = req.param("lessonType");
 			var createdBy = req.param("createdBy");
-			var newLesson = { "title": title, "url": url, "type": lessonType, "createdBy": user.fullName };
+			var newLesson = { "title": title, "url": url, "type": lessonType, "createdBy": user.fullName, "createdById": user.id };
 			
 			if (title.length < 2) {
 				res.json({ "error": "You must enter at least two letters for a lesson title." });
@@ -118,27 +62,153 @@ module.exports = {
 								res.json({ "error": err });
 							} 
 							else {
+								// Have to pass a copy in order to ref lesson out of scope.
+								var parentLesson = { "id": lesson.id, "title": lesson.title, "type": lesson.type, "createdBy": lesson.createdBy };
+
 								// Create an application video to go along with the Principle or Strategy video
 								newLesson.type = "Application";
 								newLesson.parent = lesson.title;
 								newLesson.parentType = lesson.type;
 								
-								Lesson.create(newLesson)
-									.done(function(err, application) {
+								EmailService.notifyAddLesson(user, lesson, req.headers['user-agent']);
+
+								// If lesson has a parans, then it is probably a version.
+								// Check for an existing principle, and if it doesn't exist, create it.
+								// The idea is to have only one principle for multiple versions of a principle or strategy lesson.
+								if (lesson.title.match(/\(/)) { 
+									appTitle = title.replace(/\(.+\)/, "");
+
+									Lesson.findOne({ "title": appTitle, "type": "Application" }, function(err, application) {
 										if (err) {
 											res.json({ "error": err });
-										} 
+										}
+										else if (application) { // Lesson already exists
+											res.json({ "lesson": lesson, "application": null });
+										}
 										else {
-											res.json({ "lesson": lesson, "application": application });
+											newLesson.title = appTitle;
+											newLesson.url = lessonTitleToURL(appTitle);
+											
+											createApplication(parentLesson, newLesson, res);
 										}
 									});
+								}
+								else {  // Just create the application as is.
+									createApplication(parentLesson, newLesson, res);
+								}
 							}
 						});
 				}
 			});
 		}
 		else {
-			res.json({ "error": "You must first login or signup to add a new lesson." });
+			res.json({ "error": "You must first login or signup as a teacher to add a new lesson." });
+		}
+	},
+
+	// Signup for the script or video part of the lesson.
+	signup: function(req, res) {
+		if (req.method == "PUT") {
+			if (req.session.user) {
+				var user = req.session.user;
+				var id = req.param("id");
+				var signupType = req.param("signupType");
+				
+				Lesson.findOne({ "id": id }, function(err, lesson) {
+					if (err) {
+						console.log(err)
+						res.json({ "error": "A server error occurred while attempting to fetch data." });
+					}
+					else if (lesson) {
+						if (signupType == "script") {
+							// Needs to be a better way of handling this because users can change their information.
+							lesson.script = user.fullName + " at " + user.school; 
+							lesson.scriptId = user.id;
+							lesson.scriptStatus = "In Progress";
+								
+							lesson.save(function(err) {
+								if (err) {
+									console.log(err)
+									res.json({ "error": "A server error occurred while attempting to save the lesson." });
+								}
+								else {
+									res.json(lesson);
+								}
+							});
+						}
+						else {
+							lesson.video = user.fullName + " at " + user.school; 
+							lesson.videoId = user.id;
+							lesson.videoStatus = "In Progress";
+								
+							lesson.save(function(err) {
+								if (err) {
+									console.log(err)
+									res.json({ "error": "A server error occurred while attempting to save the lesson." });
+								}
+								else {
+									res.json(lesson);
+								}
+							});
+						}
+					}
+					else {
+						res.json({ "error": "Lesson " + id + " not found." });
+					}
+				});
+			}
+		}
+	},
+
+	cancelSignup: function(req, res) {
+		if (req.method == "PUT") {
+			if (req.session.user) {
+				var user = req.session.user;
+				var id = req.param("id");
+				var signupType = req.param("signupType");
+				
+				Lesson.findOne({ "id": id }, function(err, lesson) {
+					if (err) {
+						console.log(err)
+						res.json({ "error": "A server error occurred while attempting to fetch data." });
+					}
+					else if (lesson) {
+						if (signupType == "script") {
+							lesson.script = null;
+							lesson.scriptId = null;
+							lesson.scriptStatus = null;
+								
+							lesson.save(function(err) {
+								if (err) {
+									console.log(err)
+									res.json({ "error": "A server error occurred while attempting save the lesson." });
+								}
+								else {
+									res.json(lesson);
+								}
+							});
+						}
+						else {
+							lesson.script = null;
+							lesson.scriptId = null;
+							lesson.scriptStatus = null;
+								
+							lesson.save(function(err) {
+								if (err) {
+									console.log(err)
+									res.json({ "error": "A server error occurred while attempting save the lesson." });
+								}
+								else {
+									res.json(lesson);
+								}
+							});
+						}
+					}
+					else {
+						res.json({ "error": "Lesson " + id + " not found." });
+					}
+				});
+			}
 		}
 	},
 	
@@ -153,32 +223,11 @@ module.exports = {
 		
 		Lesson.find().done(function(err, lessons) {
 			if (err) {
-				res.json({ "error": err });
+				console.log({ "error": err });
+				res.json({ "error": "An error occurred fetching the list of lessons." });
 			}
 			
 			lessonList = lessons;
-			if (user) {
-				for (var i = 0; i < lessonList.length; i++) {
-					lesson = lessonList[i];
-					scriptList = lesson.scriptList;
-					videoList = lesson.videoList;
-					
-					for (var j = 0; j < scriptList.length; j++) {
-						// If the user is in the list, they will not have a signup button.
-						if (user.fullName == scriptList[j].user) {
-							lesson.noScriptSignup = true;
-						}
-					}
-					
-					for (var j = 0; j < videoList.length; j++) {
-						// If the user is in the list, they will not have a signup button.
-						if (user.fullName == videoList[j].user) {
-							lesson.noVideoSignup = true;
-						}
-					}
-				}
-			}
-			
 			res.json({ "lessons": lessonList });
 		});
 	},

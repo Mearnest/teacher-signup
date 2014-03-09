@@ -13,6 +13,7 @@ html(lang="en")
 		link(rel="stylesheet", href="/styles/ui-lightness/jquery-ui.custom.min.css")
 		link(href="/styles/bootstrap.min.css", rel="stylesheet")
 		link(href="/styles/style.css", rel="stylesheet")
+		link(href="/styles/print.css", rel="stylesheet", media="print")
 		
 		script(src="/js/jquery.min.js")
 		script(src="/js/jquery.tablesorter.min.js")
@@ -34,20 +35,20 @@ html(lang="en")
 			header.page
 				.pull-left
 					h1.title 
-						a(href="/")
-							span.glyphicon.glyphicon-home
-							| &nbsp; Teacher Signup System
+						span.glyphicon.glyphicon-globe
+						| &nbsp; Teacher Sign Up
 				
 				#register.pull-right
-					a(href="/login") Login 
-					| &nbsp; | &nbsp;
-					a(href="/signup") Signup
+					a.login(href="/login") Login
+					a.register(href="/register") Create Account
+					a.contact(href="/contact") Contact Us
 					
 				#profile.pull-right
-					a(href="/profile") 
+					a.profile(href="/profile") 
 						span.glyphicon.glyphicon-user
 						| &nbsp; My Account
-			
+					a.logout(href="/logout") Logout
+					a.contact(href="/contact") Contact Us
 			block main
 					
 		footer

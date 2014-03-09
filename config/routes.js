@@ -31,15 +31,20 @@ module.exports.routes = {
 		controller: 'main',
 		action: 'index'
 	},
+
+	'/contact': {
+		controller: 'mail',
+		action: 'contact'
+	},
 	
 	'/test': {
 		controller: 'main',
 		action: 'test'
 	},
 	
-	'/signup': {
+	'/register': {
 		controller: 'user',
-		action: 'signup'
+		action: 'register'
 	},
 	
 	'/login': {
@@ -65,6 +70,11 @@ module.exports.routes = {
 	'/lesson/signup/:id': {
 		controller: 'lesson',
 		action: 'signup'
+	},
+
+	'/lesson/cancel/signup/:id': {
+		controller: 'lesson',
+		action: 'cancelSignup'
 	}
 };
 
