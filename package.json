@@ -10,6 +10,7 @@
 		"optimist": "0.3.4",
 		"sails-mongo": "*",
 		"password-hash": "*",
+        "nodemailer": "*",
         "jade": "*"
     },
     "scripts": {

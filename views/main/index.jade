@@ -14,88 +14,109 @@ block main
 	
 	section.content.lessons
 		header.content
-			h2 List of Lessons
+			h2.pull-left List of Lessons
+			a.print.btn.btn-primary.pull-right(href="#print") 
+				span(class="glyphicon glyphicon-print")
+				| &nbsp;&nbsp;Print
+			p.clearfix
+			
+			//- Students cannont add lessons, but show the buttoon to logged out users.
+			if !user || (user && (user.role === "Teacher" || user.role === "Admin"))		
+				a.add.principle.btn.btn-default(href="#add", data-type="Principle")
+					span(class="glyphicon glyphicon-plus") 
+					| &nbsp;&nbsp;Add Principle
 
-		div.lessons
-			table.lesson-list.table.table-bordered
-				thead
-					th.title Title
-					th.script Script
-					th.script.status Status
-					th.video Video
-					th.video.status Status
-				tbody
-					
 			table.lesson-list.principles.table.table-bordered.table-striped
 				thead
-					th.principles.lesson-type
-						| Principles <span class="glyphicon glyphicon-sort"></span>
-						
-					th.principles(colspan="4")
-						form.add-lesson(method="post", action="/lesson/create")
-							input.lesson(type="text", name="title", placeholder="Principle", required)
-							input(type="hidden", name="lessonType", value="Principle")
-							input.submit(type="submit", value="Add Lesson")
-							span.error
+					th.title Principles
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.script Script
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.video Video
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
 							
 				tbody
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
 						td.script
-							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="script") 
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.script-status
 						td.video
-							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="video")
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.video-status
-						
+
 					if lessons
 						each lesson in lessons
 							if lesson.type == "Principle"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
 									td.title= lesson.title
 									td.script
-										each person in lesson.scriptList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.scriptStatus != "Completed" && !userInList(lesson.scriptList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.script
+											| #{lesson.script}
+											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.scriptStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="script")
+												span(class="glyphicon glyphicon-pencil")
+												| &nbsp;Sign-up
 											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
-										each person in lesson.videoList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.video
+											| #{lesson.video}
+											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.videoStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="video")
+												span(class="glyphicon glyphicon-pencil") 
+												| &nbsp;Sign-up
 											span.error
 									td.video-status= lesson.videoStatus 
-					
-					
+
+			//- Students cannont add lessons, but show the buttoon to logged out users.
+			if !user || (user && (user.role === "Teacher" || user.role === "Admin"))
+				a.add.strategy.btn.btn-default(href="#add", data-type="Strategy")
+					span(class="glyphicon glyphicon-plus") 
+					| &nbsp;&nbsp;Add Strategy
+
 			table.lesson-list.strategies.table.table-bordered.table-striped
 				thead
-					th.strategies.lesson-type
-						| Strategies <span class="glyphicon glyphicon-sort"></span>
-						
-					th.strategies(colspan="4")
-						form.add-lesson(method="post", action="/lesson/create")
-							input.lesson(type="text", name="title", placeholder="Strategy", required)
-							input(type="hidden", name="lessonType", value="Strategy")
-							input.submit(type="submit", value="Add Lesson")
-							span.error
+					th.title Strategies
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.script Script
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.video Video
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
 						
 				tbody
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
 						td.script
-							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="script")
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.script-status
 						td.video
-							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="video")
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.video-status
 						
@@ -105,39 +126,55 @@ block main
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
 									td.title= lesson.title
 									td.script
-										each person in lesson.scriptList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.scriptStatus != "Completed" &&!userInList(lesson.scriptList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.script
+											| #{lesson.script}
+											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.scriptStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="script")
+												span(class="glyphicon glyphicon-pencil") 
+												| &nbsp;Sign-up
 											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
-										each person in lesson.videoList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.video
+											| #{lesson.video}
+											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.videoStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="video")
+												span(class="glyphicon glyphicon-pencil") 
+												| &nbsp;Sign-up
 											span.error
 									td.video-status= lesson.videoStatus 
 									
 			table.lesson-list.applications.table.table-bordered.table-striped
 				thead
-					th.applications.lesson-type
-						| Applications <span class="glyphicon glyphicon-sort"></span>
-					th.strategies(colspan="4")
-						//- Applications are automatically added when a Principle or Strategy is added
+					th.title Applications
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.script Script
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.video Video
+						span.pull-right(class="glyphicon glyphicon-sort")
+					th.status Status
+						span.pull-right(class="glyphicon glyphicon-sort")
 						
 				tbody
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
 						td.script
-							a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="script")
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.script-status
 						td.video
-							a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+							a.signup.btn.btn-default(href="#signup", data-type="video")
+								span(class="glyphicon glyphicon-pencil") 
+								| &nbsp;Sign-up
 							span.error
 						td.video-status
 						
@@ -145,32 +182,34 @@ block main
 						each lesson in lessons
 							if lesson.type == "Application"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
-									td.title #{lesson.title} (#{lesson.parentType})
+									td.title #{lesson.title} #{lesson.parentType}
 									td.script
-										each person in lesson.scriptList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.scriptStatus != "Completed" &&!userInList(lesson.scriptList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="script") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.script
+											| #{lesson.script}
+											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.scriptStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="script")
+												span(class="glyphicon glyphicon-pencil") 
+												| &nbsp;Sign-up
+											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
-										each person in lesson.videoList
-											| #{person.user} at #{person.school}
-											br
-										if lesson.videoStatus != "Completed" &&!userInList(lesson.videoList, user)
-											a.signup.btn.btn-default(href="#signup", data-type="video") <span class="glyphicon glyphicon-pencil">&nbsp;</span>Signup
+										if lesson.video
+											| #{lesson.video}
+											if (lesson.videoStatus != "Completed") && (user && lesson.video.match(user.fullName))
+												span.pull-right(class="glyphicon glyphicon-remove")
+										else if lesson.videoStatus != "Completed"
+											a.signup.btn.btn-default(href="#signup", data-type="video")
+												span(class="glyphicon glyphicon-pencil") 
+												| &nbsp;Sign-up
+											span.error
 									td.video-status= lesson.videoStatus 
-			
-	section.content.signup
-		header.content
-			h2.pull-left Signup
-			
-			h2.pull-right 
-				a(href="/") Lessons
-			
-			p.clearfix
+	
 
-		form.signup(method="post", action="/signup", enctype="multipart/form-data")
+	section.register
+		form.register(method="post") 
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
 			p
 				input#signup-first-name(type="text", name="firstName", placeholder="First Name", required, autofocus)
 				| &nbsp;&nbsp;
@@ -196,60 +235,104 @@ block main
 					
 			p
 				input#signup-password(type="password", name="password", placeholder="password", required)
+				| &nbsp;&nbsp;
 				input#signup-confirm-password(type="password", name="confirmPassword" placeholder="confirm password", required)
 			p
-				input.submit(type="submit", value="Signup")
+				input.submit(type="submit", value="Create")
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
 				
 			p.error
 	
-	section.content.login
-		header.content
-			h2.pull-left Login
-			
-			h2.pull-right 
-				a(href="/") Lessons
-			
-			p.clearfix
 
-		form.login(method="post", action="/login")
+	section.login
+		form.login(method="post")
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
 			p
 				input#login-name(type="text", name="loginName", placeholder="full name or email", required, autofocus)
 			p
 				input#login-password(type="password", name="password", placeholder="password", required)
 			p
 				input.submit(type="submit", value="Login")
-			
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
 			p.error
-			
-	section.content.profile
-		header.content
-			h2#fullName.pull-left My Profile
-			
-			h2.pull-right 
-				a(href="/") Lessons
-			
-			p.clearfix
-		
-			
-		.info.user.pull-left
+			p
+				| Or 
+				a(class="login-create-account" href="#create") Create an Account
+				| &nbsp;if you don't already have one.
+
+
+	section.profile
+		.info.user
 			p#email
 				a(href="mailto:")
-			
 			p#role 
-			
 			p#school
-			
-			p 
-				a.btn.btn-primary.logout(href="/logout") Logout
-			
-		.info.lessons-created.pull-left
-			header Lessons Created
-			.content
 		
-		.info.scripts.pull-left
-			header Scripts I've signed up for
+		.info.scripts
+			header 
+				span(class="glyphicon glyphicon-folder-close")
+				| &nbsp;&nbsp;
+				| Scripts I've signed-up for.
+				
 			.content
 			
-		.info.videos.pull-left
-			header Videos I've signed up for
+		.info.videos
+			header
+				span(class="glyphicon glyphicon-facetime-video")
+				| &nbsp;&nbsp;
+				| Videos I've signed-up for.
 			.content
+
+		.info.lessons-created
+			header 
+				span(class="glyphicon glyphicon-film")
+				| &nbsp;&nbsp;
+				| Lessons I've added.
+			.content
+
+		input.cancel(type="button" value="Close")
+
+	
+	section.contact
+		//- Action defined in javascript to make spam bot job harder.
+		form.contact(method="post")
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
+			p
+				input(type="text" name="subject" placeholder="Subject" required autofocus)
+			p
+				textarea(name="message" cols="50" rows="5" placeholder="Body" required)
+			p
+				input.send(type="submit" value="Send")
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
+			p.message.contact 
+				span(class="glyphicon glyphicon-envelope")
+				| &nbsp;Sending message ...
+
+
+	section.add-lesson
+		form.add-lesson(method="post", action="/lesson/create")
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
+			p
+				input.lesson(type="text", name="title", placeholder="", required autofocus)
+				input.lesson-type(type="hidden", name="lessonType", value="")
+			p.error
+			p
+				span Check your spelling before adding.
+			p
+				input.send(type="submit" value="Add")
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
+
+	section.signup
+		#signup-title
+
+		input.signup.ok(type="button" value="OK")
+		| &nbsp;&nbsp;
+		input.cancel(type="button" value="Cancel")
+
+	section.message
+		#message-title
+		input.message.cancel(type="button" value="OK")

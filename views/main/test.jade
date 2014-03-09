@@ -1,15 +1,8 @@
 extends ../layout
 
 block main
-	header.content
-		h2 Test
+	section.content
+		header
+			h2 Test
 
-	form#login(method="post", action="/login")
-		p
-			input#login-name(type="text", name="fullName", placeholder="full name or email", min="5", required, autofocus)
-		p
-			input#login-password(type="password", name="password", placeholder="password", min="3", required)
-		p
-			input.submit(type="submit", value="Login")
-			
-		p.error
+			pre= data

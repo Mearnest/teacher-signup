@@ -1,5 +1,6 @@
 html, body {
 	height: 100%;
+	background-color: #F0EAEA;
 }
 
 body {
@@ -22,6 +23,24 @@ h2.pull-left, h2.pull-right {
 a:link {
 	text-decoration: none;
 }
+
+.page a {
+	margin-left: 25px;
+}
+
+a.print {
+	margin-top: 15px;
+}
+
+a.cancel {
+	display: block;
+	margin-top: 5px;
+}
+
+a.login-create-account {
+	color: #428bca
+}
+
 
 ::-webkit-input-placeholder {
    font-weight: 700;
@@ -57,7 +76,7 @@ placeholder {
 	}
 	
 		#register, #profile {
-			font-size: 24px;
+			font-size: 20px;
 			padding-top: 25px;
 			display: none;
 		}
@@ -81,41 +100,69 @@ footer {
 	/* background-color: #7fc8e4; */
 }
 
-section.login, section.signup, section.profile {
+section.login, section.register, section.profile, section.contact, section.add-lesson, section.signup, section.message {
+	display: none;
+}
+
+section.message {
+	text-align: center;
+}
+
+	input.message {
+		margin: 10px;
+	}
+
+p.contact.message {
+	display: none;
+}
+
+div.popup {
 	display: none;
 }
 
 /*		Lesson List Tables		*/
-th.lesson-type, th.title, td.title {
-	width: 25%;
-}
-
-th.status, td.status, td.script-status, td.video-status {
-	width: 12%;
-}
-
-th.lesson-type {
-	font-weight: 700;
-	color: #fff;
-	cursor: pointer;
-}
-
-th.principles {
+table.principles thead {
 	background-color: #BC3835;
+	
 }
 
-th.strategies {
+table.strategies thead {
 	background-color: #5D417E;
 }
 
-th.applications {
+table.applications thead {
 	background-color: #2787A0;
 }
 
-tr.clone {
-	display: none;
+	thead {
+		color: #eee;
+		cursor: pointer;
+	}
+
+	th.lesson-type, th.title, th.script,  th.video, td.title {
+		width: 25%;
+	}
+
+	th.status, td.status, td.script-status, td.video-status {
+		width: 12%;
+	}
+
+	tr.clone {
+		display: none;
+	}
+	
+/*		User Profile		*/
+div.info {
+	margin-bottom: 20px;
 }
 
+	div.info header {
+		font-weight: 700;
+		border-bottom: 1px dashed;
+	}
+
+
+/*		Errors, sticky, icons 	*/
 p.error {
 	color: red;
 	font-weight: 700;
@@ -126,27 +173,137 @@ span.error {
 	padding-left: 10px;
 }
 
-td.change-status {
+
+section.signup input {
+	margin-bottom: 10px;
+}
+
+#signup-title {
+	margin: 10px 0;
+}
+
+.glyphicon-pencil {
+	right: 5px;
+}
+
+.glyphicon-remove {
 	cursor: pointer;
 }
 
-	a.cancel {
-		display: block;
-		margin-top: 5px;
-	}
-
-div.popup {
-	display: none;
-}
-	
-/*		User Profile		*/
-div.info {
-	width: 25%;
-	padding: 0 20px;
+.sticky {  
+	position: fixed;
+	top: 0;
+	z-index: 100;
+	border-top: 0;
 }
 
-	div.info header {
-		font-weight: 700;
-		border-bottom: 1px dashed;
+.change-status {
+	cursor: pointer;
+}
+
+span.Principle {
+	color: #BC3835;
+}
+
+span.Strategy {
+	color: #5D417E;
+}
+
+span.Application {
+	color: #2787A0;
+}
+
+@media (max-width: 700px) {
+	body {
+		font-size: 12px;
 	}
 
+	h1 {
+		font-size: 24px;
+	}
+
+	h2 {
+		font-size: 16px;
+	}
+
+	#register, #profile {
+		padding-top: 20px;
+		font-size: 16px;
+	}
+
+	th.lesson-type, th.title, th.script,  th.video, td.title {
+		width: 23%;
+	}
+
+	th.status, td.status, td.script-status, td.video-status {
+		width: 15%;
+	}
+
+	.btn {
+		font-size: 12px;
+	}
+}
+
+@media (max-width: 500px) {
+	body {
+		font-size: 10px;
+	}
+
+	h1 {
+		font-size: 20px;
+		color: green;
+	}
+
+	h2 {
+		font-size: 14px;
+	}
+
+	#register, #profile {
+		padding-top: 18px;
+	}
+
+	.btn {
+		font-size: 10px;
+	}
+}
+
+@media (max-width: 440px) {
+	body {
+		font-size: 8px;
+	}
+
+	h1 {
+		font-size: 18px;
+	}
+
+	h2 {
+		font-size: 13px;
+	}
+
+	#register, #profile {
+		padding-top: 20px;
+		font-size: 14px;
+	}
+
+	th.lesson-type, th.title, th.script,  th.video, td.title {
+		width: 22%;
+	}
+
+	th.status, td.status, td.script-status, td.video-status {
+		width: 16%;
+	}
+
+	.btn {
+		font-size: 8px;
+	}
+}
+
+@media (max-width: 400px) {
+	body {
+		font-size: 7px;
+	}
+
+	.btn {
+		font-size: 7px;
+	}
+}

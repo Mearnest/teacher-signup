@@ -21,16 +21,22 @@ module.exports = {
 			type: 'string',
 			required: true,
 		},
-		scriptList: {  // List of signed-up users.
-			type: 'array',
-			defaultsTo:  [],
+		script: {  // signed-up user
+			type: 'string',
+			defaultsTo:  null,
 		},	
-		videoList: {  // List of signed-up users.
-			type: 'array',
-			defaultsTo:  [],
+		video: {  // signed-up user
+			type: 'string',
+			defaultsTo:  null,
 		},
-		scriptStatus: 'string',  // in progress, finished
-		videoStatus: 'string',	// in progress, finished
+
+		createdById: 'string', // user id
+		scriptId: 'string', // user id
+		scriptStatus: 'string',  // not started/null / in progress, finished
+		videoId: 'string', // user id
+		videoStatus: 'string',	// not started/null / in progress, finished
+
+		// To access lesson via a url
 		url: 'string',
 		
 		// For Application lessons only
