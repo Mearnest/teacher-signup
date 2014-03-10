@@ -189,9 +189,9 @@ module.exports = {
 							});
 						}
 						else {
-							lesson.script = null;
-							lesson.scriptId = null;
-							lesson.scriptStatus = null;
+							lesson.video = null;
+							lesson.videoId = null;
+							lesson.videoStatus = null;
 								
 							lesson.save(function(err) {
 								if (err) {
