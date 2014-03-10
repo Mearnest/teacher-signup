@@ -265,6 +265,11 @@ span.Application {
 	.btn {
 		font-size: 10px;
 	}
+
+	/* Print isn't working on my phone so hide it. */
+	a.print {
+		display: none;
+	}
 }
 
 @media (max-width: 440px) {

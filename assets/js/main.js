@@ -98,7 +98,7 @@ $(function() {
 				$("p.contact.message").hide();
 				$("section.contact").dialog("close");
 				
-				var elem = (user ? $(this) : $("a.login")); // The element to base the positioning of the dialog on.
+				var elem = (user ? $("a.profile") : $("a.login")); // The element to base the positioning of the dialog on.
 				$("#message-title").html(data.message);
 				$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: { my: "left top", at: "left bottom", of: elem }});
 			}
