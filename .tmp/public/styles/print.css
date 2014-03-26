@@ -1,0 +1,19 @@
+#profile, #register {
+	display: none;
+}
+
+a {
+	display: none;
+}
+
+span.glyphicon {
+	display: none;
+}
+
+span.spacer {
+	display: none;
+}
+
+.btn {
+	display: none;
+}
