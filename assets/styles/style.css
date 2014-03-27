@@ -146,6 +146,10 @@ table.applications thead {
 	th.status, td.status, td.script-status, td.video-status {
 		width: 12%;
 	}
+	
+	th.created {
+		width: 10%;
+	}
 
 	tr.clone {
 		display: none;

@@ -1,6 +1,12 @@
 extends ../layout
 
 block head
+	//- Hackish way to do this but need simple way to make this available to jade and man.js
+	- Date.prototype.toTFLString = function() { return (this.getMonth() + 1) + "/" + this.getDate() + "/" + this.getFullYear(); }
+	
+	script.
+		Date.prototype.toTFLString = !{Date.prototype.toTFLString};
+		
 	if user
 		script.
 			var account = !{ JSON.stringify(user) };
@@ -30,6 +36,8 @@ block main
 				thead
 					th.title Principles
 						span.pull-right(class="glyphicon glyphicon-sort")
+					th.created Created
+						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.status Status
@@ -43,6 +51,7 @@ block main
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
+						td.created
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script") 
 								span(class="glyphicon glyphicon-pencil") 
@@ -61,6 +70,7 @@ block main
 							if lesson.type == "Principle"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
 									td.title= lesson.title
+									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
@@ -94,6 +104,8 @@ block main
 				thead
 					th.title Strategies
 						span.pull-right(class="glyphicon glyphicon-sort")
+					th.created Created
+						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.status Status
@@ -107,6 +119,7 @@ block main
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
+						td.created
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script")
 								span(class="glyphicon glyphicon-pencil") 
@@ -125,6 +138,7 @@ block main
 							if lesson.type == "Strategy"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
 									td.title= lesson.title
+									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
@@ -152,6 +166,8 @@ block main
 				thead
 					th.title Applications
 						span.pull-right(class="glyphicon glyphicon-sort")
+					th.created Created
+						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.status Status
@@ -165,6 +181,7 @@ block main
 					//- Empty row used to add new rows as lessons are created.
 					tr.clone(data-id="", data-title="")
 						td.title
+						td.created
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script")
 								span(class="glyphicon glyphicon-pencil") 
@@ -183,6 +200,7 @@ block main
 							if lesson.type == "Application"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
 									td.title #{lesson.title} #{lesson.parentType}
+									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
