@@ -135,7 +135,7 @@ $(function() {
 	}
 
 	function signupHTML() {
-		return '<a href="#signup" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Sign-up</a>';
+		return '<a href="#signup" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Sign Up!</a>';
 	}
 
 	function cancelSignupHTML() {
@@ -214,6 +214,7 @@ $(function() {
 				console.log(data);
 				var lesson = data.lesson;
 				var application = data.application;
+				var created = new Date().toTFLString();
 				var table, newRow;
 				var addBtn; // element that trigged this event
 				
@@ -233,6 +234,7 @@ $(function() {
 				newRow.attr("data-id", lesson.id);
 				newRow.attr("data-title", lesson.title);
 				$("td.title", newRow).html(lesson.title);
+				$("td.created", newRow).html(created);
 				$("a.signup", newRow).on("click", lessonSignup);
 				table.prepend(newRow);
 				table.trigger("update");
@@ -245,6 +247,7 @@ $(function() {
 					newRow.attr("data-id", application.id);
 					newRow.attr("data-title", application.title);
 					$("td.title", newRow).html(application.title + " " + application.parentType);
+					$("td.created", newRow).html(created);
 					$("a.signup", newRow).on("click", lessonSignup);
 					table.prepend(newRow);
 					table.trigger("update");
@@ -597,7 +600,9 @@ $(function() {
 	bindAdminStatusChange();
 
 	// These need to be assigned before the form add-lesson submit handler.
-	$("table.lesson-list").tablesorter(); 
+	$("table.lesson-list").tablesorter({
+		textExtraction: 'complex'  // handle html, dates?
+	}); 
 
 	// Change sort glyph depending on what sort state the table is in.
 	$("th").click(function(event) {
