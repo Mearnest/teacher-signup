@@ -122,7 +122,7 @@ module.exports = {
 					else if (lesson) {
 						if (signupType == "script") {
 							// Needs to be a better way of handling this because users can change their information.
-							lesson.script = user.fullName + " at " + user.school; 
+							lesson.script = user.fullName + (user.school != 'Other' ? " at " + user.school : ""); 
 							lesson.scriptId = user.id;
 							lesson.scriptStatus = "In Progress";
 								
