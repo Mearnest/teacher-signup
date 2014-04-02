@@ -41,6 +41,10 @@ a.login-create-account {
 	color: #428bca
 }
 
+a.lessons {
+	display: none;
+}
+
 
 ::-webkit-input-placeholder {
    font-weight: 700;
@@ -100,7 +104,7 @@ footer {
 	/* background-color: #7fc8e4; */
 }
 
-section.login, section.register, section.profile, section.contact, section.add-lesson, section.signup, section.message {
+section.login, section.register, section.profile, section.contact, section.add-lesson, section.edit-lesson, section.signup, section.message {
 	display: none;
 }
 
@@ -147,6 +151,14 @@ table.applications thead {
 		width: 12%;
 	}
 	
+	th.status, td.script-status, td.video-status {
+		border-right: 2px solid !important;
+	}
+	
+	th.script, td.script {
+		border-left: 2px solid !important;
+	}
+	
 	th.created {
 		width: 10%;
 	}
@@ -190,7 +202,7 @@ section.signup input {
 	right: 5px;
 }
 
-.glyphicon-remove {
+.glyphicon-remove, .glyphicon-edit {
 	cursor: pointer;
 }
 

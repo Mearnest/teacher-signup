@@ -34,11 +34,9 @@ block main
 
 			table.lesson-list.principles.table.table-bordered.table-striped
 				thead
-					th.title 
-						i#blah.glyphicon.glyphicon-question-sign(rel='tooltip', title='This has information about the name of ...')
-						| &nbsp;Principles
+					th.title Principles
 						span.pull-right(class="glyphicon glyphicon-sort")
-					th.created Created
+					th.created Added
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
@@ -57,42 +55,47 @@ block main
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script") 
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video")
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.video-status
 
 					if lessons
 						each lesson in lessons
 							if lesson.type == "Principle"
-								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
+								tr(data-id="#{lesson.id}", data-title="#{lesson.title}", data-type="#{lesson.type}")
 									td.title= lesson.title
+										//- If the user is logged in and they have the admin role or created the lesson, show edit and remove icons.
+										if (user && (user.role == "Admin" || lesson.createdBy == user.fullName))
+											br
+											span.pull-left(class="glyphicon glyphicon-edit lesson") &nbsp;Edit
+											span.pull-right(class="glyphicon glyphicon-remove lesson") &nbsp;Delete
 									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
 											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
 												span(class="glyphicon glyphicon-pencil")
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
 										if lesson.video
 											| #{lesson.video}
 											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
 												span(class="glyphicon glyphicon-pencil") 
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.video-status= lesson.videoStatus 
 
@@ -106,7 +109,7 @@ block main
 				thead
 					th.title Strategies
 						span.pull-right(class="glyphicon glyphicon-sort")
-					th.created Created
+					th.created Added
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
@@ -125,42 +128,42 @@ block main
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script")
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video")
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.video-status
 						
 					if lessons
 						each lesson in lessons
 							if lesson.type == "Strategy"
-								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
+								tr(data-id="#{lesson.id}", data-title="#{lesson.title}", data-type="#{lesson.type}")
 									td.title= lesson.title
 									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
 											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
 												span(class="glyphicon glyphicon-pencil") 
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
 										if lesson.video
 											| #{lesson.video}
 											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
 												span(class="glyphicon glyphicon-pencil") 
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.video-status= lesson.videoStatus 
 									
@@ -168,7 +171,7 @@ block main
 				thead
 					th.title Applications
 						span.pull-right(class="glyphicon glyphicon-sort")
-					th.created Created
+					th.created Added
 						span.pull-right(class="glyphicon glyphicon-sort")
 					th.script Script
 						span.pull-right(class="glyphicon glyphicon-sort")
@@ -187,42 +190,42 @@ block main
 						td.script
 							a.signup.btn.btn-default(href="#signup", data-type="script")
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.script-status
 						td.video
 							a.signup.btn.btn-default(href="#signup", data-type="video")
 								span(class="glyphicon glyphicon-pencil") 
-								| &nbsp;Sign Up!
+								| &nbsp;Sign Up
 							span.error
 						td.video-status
 						
 					if lessons
 						each lesson in lessons
 							if lesson.type == "Application"
-								tr(data-id="#{lesson.id}", data-title="#{lesson.title}")
+								tr(data-id="#{lesson.id}", data-title="#{lesson.title}", data-type="#{lesson.type}")
 									td.title #{lesson.title} #{lesson.parentType}
 									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
 											| #{lesson.script}
 											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
 												span(class="glyphicon glyphicon-pencil") 
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.script-status= lesson.scriptStatus 
 									td.video
 										if lesson.video
 											| #{lesson.video}
 											if (lesson.videoStatus != "Completed") && (user && lesson.video.match(user.fullName))
-												span.pull-right(class="glyphicon glyphicon-remove")
+												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
 												span(class="glyphicon glyphicon-pencil") 
-												| &nbsp;Sign Up!
+												| &nbsp;Sign Up
 											span.error
 									td.video-status= lesson.videoStatus 
 	
@@ -253,8 +256,6 @@ block main
 					option(value="McPherson") McPherson
 					option(value="Southwestern") Southwestern
 					option(value="Wichita State") Wichita State
-                    
-					
 			p
 				input#signup-password(type="password", name="password", placeholder="password", required)
 				| &nbsp;&nbsp;
@@ -285,8 +286,13 @@ block main
 				| &nbsp;if you don't already have one.
 
 
-	section.profile
+	section.content.profile
+		header.content
+			h2.pull-left My Account
+			p.clearfix
+			
 		.info.user
+			p#fullName
 			p#email
 				a(href="mailto:")
 			p#role 
@@ -313,8 +319,6 @@ block main
 				| &nbsp;&nbsp;
 				| Lessons I've added.
 			.content
-
-		input.cancel(type="button" value="Close")
 
 	
 	section.contact
@@ -347,6 +351,30 @@ block main
 				input.send(type="submit" value="Add")
 				| &nbsp;&nbsp;
 				input.cancel(type="button" value="Cancel")
+				
+	section.edit-lesson
+		form.edit-lesson(method="put", action="/lesson")
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
+			p
+				input.lesson(type="text", name="title", value="", required autofocus)
+			p Type: &nbsp;&nbsp;
+				select.lesson-type(name="lessonType", required)
+					option(value="") Select
+					option(value="Principle") Principle
+					option(value="Strategy") Strategy
+					option(value="Application") Application
+			p.error
+			p
+				input.send(type="submit" value="Save")
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
+				
+	section.delete-lesson
+		#delete-title
+		p
+		input.delete.ok(type="button" value="OK")
+		| &nbsp;&nbsp;
+		input.cancel(type="button" value="Cancel")
 
 	section.signup
 		#signup-title

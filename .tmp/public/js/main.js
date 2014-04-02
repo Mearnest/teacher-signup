@@ -52,6 +52,7 @@ $(function() {
 				}
 				
 				refreshLessonList(function() {
+					bindLessonEvents();
 					bindUserCancelSignup();
 					bindAdminStatusChange();
 					setUserFields();
@@ -133,13 +134,26 @@ $(function() {
 			$(".info.videos > .content").html(newHTML);
 		});
 	}
+	
+	// Upon logging out, the user fields need to be removed.
+	function clearUserFields() {
+		$("#fullName").html("");
+		$("#email a").attr("href", "mailto:");
+		$("#email a").text("");
+		$("#role").html("Role: ");
+		$("#school").html("School: ");
+	}
+	
+	function editLessonHTML() {
+		return '<br><span class="pull-left glyphicon glyphicon-edit lesson"> Edit</span><span class="pull-right glyphicon glyphicon-remove lesson"> Delete<span>';
+	}
 
 	function signupHTML() {
-		return '<a href="#signup" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Sign Up!</a>';
+		return '<a href="#signup" class="signup btn btn-default"><span class="glyphicon glyphicon-pencil"></span>&nbsp;Sign Up</a>';
 	}
 
 	function cancelSignupHTML() {
-		return '<span class="pull-right glyphicon glyphicon-remove"></span>';
+		return '<span class="pull-right glyphicon glyphicon-remove status"></span>';
 	}
 	
 	// When Logging in our out, need to refresh the list of lessons.
@@ -151,15 +165,23 @@ $(function() {
 			}
 			else {
 				try {
-					var row, scriptCell, videoCell;
+					var row, title, scriptCell, videoCell;
 					var scripts, videos, newHTML;
 					
 					$.each(data.lessons, function(index, lesson) {
 						row = $("tr[data-id='" + lesson.id + "']");
+						title = $("td.title", row);
 						scriptCell = $("td.script", row);
 						videoCell = $("td.video", row);
 						scripts = lesson.scriptList;
 						videos = lesson.videoList;
+						
+						if (user && (user.role == "Admin" || user.fullName == lesson.createdBy)) {
+							title.html(lesson.title + editLessonHTML());
+						}
+						else {
+							title.html(lesson.title);
+						}
 						
 						newHtml = "";
 						if (lesson.script) {
@@ -233,7 +255,7 @@ $(function() {
 				newRow.removeClass("clone");
 				newRow.attr("data-id", lesson.id);
 				newRow.attr("data-title", lesson.title);
-				$("td.title", newRow).html(lesson.title);
+				$("td.title", newRow).html(lesson.title + editLessonHTML());
 				$("td.created", newRow).html(created);
 				$("a.signup", newRow).on("click", lessonSignup);
 				table.prepend(newRow);
@@ -253,6 +275,8 @@ $(function() {
 					table.trigger("update");
 				}
 				
+				bindLessonEvents();  // Remove and Edit
+				
 				$("p.error", form).html(""); // Clear any error messages
 				form[0].reset();  // Clear input field
 				$("section.add-lesson").dialog("close");
@@ -261,6 +285,43 @@ $(function() {
 				$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: { my: "left top", at: "left bottom", of: addBtn }});
 			}
 		});
+	}
+	
+	function editLesson(event) {
+		var cell = $(this).parent();
+		var row = cell.parent();
+		var lessonId = row.attr("data-id");
+		var lessonTitle = row.attr("data-title");
+		var lessonType = row.attr("data-type");
+		var section = $("section.edit-lesson");
+		
+		$("form.edit-lesson").attr("action", "lesson/" + lessonId);
+		$("input.lesson", section).val(lessonTitle);
+		$("select.lesson-type", section).val(lessonType);
+		
+		section.dialog({ width: 'auto', height: 'auto', title: "Edit Lesson", position: { my: "left top", at: "left bottom", of: cell }});
+	}
+	
+	function removeLesson(event) {
+		var cell = $(this).parent();
+		var row = cell.parent();
+		var lessonId = row.attr("data-id");
+		var lessonTitle = row.attr("data-title");
+		var lessonType = row.attr("data-type");
+		var section = $("section.delete-lesson");
+		
+		$("#delete-title").html(lessonTitle);
+		
+		section.dialog({ width: 'auto', height: 'auto', title: "Delete?", position: { my: "left top", at: "left bottom", of: cell }});
+	}
+	
+	function bindLessonEvents() {
+		 // Prevent stacking
+		$("span.glyphicon-edit.lesson").unbind("click");
+		$("span.glyphicon-remove.lesson").unbind("click");
+		
+		$("span.glyphicon-edit.lesson").click(editLesson);
+		$("span.glyphicon-remove.lesson").click(removeLesson);
 	}
 	
 	function lessonSignup(event) {
@@ -322,8 +383,8 @@ $(function() {
 	}
 
 	function bindUserCancelSignup() {
-		$("span.glyphicon-remove").unbind("click"); // Prevent stacking
-		$("span.glyphicon-remove").click(function(event) {
+		$("span.glyphicon-remove.status").unbind("click"); // Prevent stacking
+		$("span.glyphicon-remove.status").click(function(event) {
 			var cell = $(this).parent();
 			var row = cell.parent();
 			var lessonId = row.attr("data-id");
@@ -474,6 +535,8 @@ $(function() {
 	$("a[href='/']").click(function(event) {
 		event.preventDefault();
 		
+		$("a.profile").show();
+		$("a.lessons").hide();
 		$("section").hide();
 		$("section.lessons").show();
 	}); 
@@ -488,6 +551,9 @@ $(function() {
 	
 	$("a.logout").click(function(event) {
 		event.preventDefault();
+		$("section").hide();
+		$("section.lessons").show();
+		clearUserFields(); 
 		
 		$.get("/logout", function(data) {
 			user = null;
@@ -531,7 +597,11 @@ $(function() {
 		event.preventDefault();
 
 		setUserFields();  // Make sure latest info is loaded
-		$("section.profile").dialog({ width: '350', height: '500', title: user.fullName, position: { my: "left top", at: "left bottom", of: $(this) }});
+		// $("section.profile").dialog({ width: '350', height: '500', title: user.fullName, position: { my: "left top", at: "left bottom", of: $(this) }});
+		$("a.profile").hide();
+		$("a.lessons").show();
+		$("section").hide();
+		$("section.profile").show();
 	}); 
 
 	$("a.add").click(function(event) {
@@ -581,8 +651,6 @@ $(function() {
 
 	$("a.signup").click(lessonSignup);
 
-	
-
 	$("a.print").click(function(event) {
 		event.preventDefault();
 
@@ -595,7 +663,8 @@ $(function() {
 	
 	// Add a new Principle or Strategy Lesson
 	$("form.add-lesson").submit(addLesson);
-
+	
+	bindLessonEvents();
 	bindUserCancelSignup();
 	bindAdminStatusChange();
 
@@ -624,8 +693,8 @@ $(function() {
 
 	// Sticky table Headers
 	var principleTop = $("table.principles").offset().top;
-	var strategyTop = $("table.strategies").offset().top - 105;
-	var applicationTop = $("table.applications").offset().top - 80;
+	var strategyTop = $("table.strategies").offset().top; 			//  - 105;  Offset
+	var applicationTop = $("table.applications").offset().top - 60;   // Offset
 
   	var stickyWidth = $("table.principles").width();
   	var stickyColWidths = [];
