@@ -107,11 +107,23 @@ $(function() {
 	}
 	
 	function setUserFields() {
-		$("#fullName").html(user.fullName);
-		$("#email a").attr("href", "mailto:" + user.email);
-		$("#email a").text(user.email);
-		$("#role").html("Role: " + user.role);
-		$("#school").html("School: " + user.school);
+		var section = $("section.profile");
+
+		setUserLabels(section, user);
+
+		$("input.firstName").val(user.firstName);
+		$("input.lastName").val(user.lastName);
+		$("input.email").val(user.email);
+		if (user.role == "Admin") {
+			// if role isn't already added
+			if ($("select.role option[value='Admin']").length == 0) {
+				$("select.role").append('<option value="Admin">Admin</option>');
+			}
+		}
+		$("select.role").val(user.role);
+		$("select.school").val(user.school);
+
+		$("form.edit-profile").attr("action", "/user/update/" + user.id);
 		
 		$.get("/profile", function(data) {
 			var newHTML = "";
@@ -134,14 +146,60 @@ $(function() {
 			$(".info.videos > .content").html(newHTML);
 		});
 	}
+
+	function setUserLabels(section, account) {
+		console.log(section, account);
+
+		$("span.fullName", section).html(account.fullName);
+		$("span.email a", section).attr("href", "mailto:" + account.email);
+		$("span.email a", section).text(account.email);
+		$("span.role", section).html("Role: " + account.role);
+		$("span.school", section).html("School: " + account.school);
+	}
 	
 	// Upon logging out, the user fields need to be removed.
 	function clearUserFields() {
-		$("#fullName").html("");
-		$("#email a").attr("href", "mailto:");
-		$("#email a").text("");
-		$("#role").html("Role: ");
-		$("#school").html("School: ");
+		$("span.fullName").html("");
+		$("span.email a").attr("href", "mailto:");
+		$("span.role").text("");
+		$("span.role").html("Role: ");
+		$("span.school").html("School: ");
+
+		$("form.edit-profile")[0].reset();
+	}
+
+	function saveProfile(event) {
+		event.preventDefault();
+		var form = $(this);
+		var path = form.attr("action");
+
+		$.ajax({
+			url: path,
+			type: 'PUT',
+			data: form.serialize(),
+			success: function(data) {
+				if (data.error) {
+					$("p.error", form).html(data.error);
+				}
+				else {
+					// console.log(data);
+					var section = $("section.profile");
+					var account = data.user;
+					setUserLabels(section, account);
+
+					// update the global user object
+					user.fullName = account.fullName;
+					user.firstName = account.firstName;
+					user.role = account.role;
+					user.school = account.school;
+					
+					 refreshLessonList(function() {});
+
+					$("form.edit-profile").hide();
+					$(".view-profile").show();
+				}
+			}
+		});
 	}
 	
 	function editLessonHTML() {
@@ -233,7 +291,6 @@ $(function() {
 				$("p.error", form.parent()).html(data.error);
 			}
 			else {
-				console.log(data);
 				var lesson = data.lesson;
 				var application = data.application;
 				var created = new Date().toTFLString();
@@ -288,31 +345,106 @@ $(function() {
 	}
 	
 	function editLesson(event) {
-		var cell = $(this).parent();
-		var row = cell.parent();
-		var lessonId = row.attr("data-id");
-		var lessonTitle = row.attr("data-title");
-		var lessonType = row.attr("data-type");
-		var section = $("section.edit-lesson");
-		
-		$("form.edit-lesson").attr("action", "lesson/" + lessonId);
-		$("input.lesson", section).val(lessonTitle);
-		$("select.lesson-type", section).val(lessonType);
-		
-		section.dialog({ width: 'auto', height: 'auto', title: "Edit Lesson", position: { my: "left top", at: "left bottom", of: cell }});
+		event.preventDefault();
+		var form = $(this);
+		var path = form.attr("action");
+		var title = $("input.lesson", form).val();
+		var lessonType = $("select.lesson-type", form).val();
+		var csrf = $("input.csrf").val();
+
+		$.ajax({
+			url: path,
+			type: 'PUT',
+			data: { "title": title, "lessonType": lessonType, "_csrf": csrf },
+			success: function(data) {
+				if (data.error) {
+					$("p.error", form).html(data.error);
+				}
+				else {
+					var lesson = data.lesson;
+					var row = $('tr[data-id="' + lesson.id + '"]');
+					var titleCell = $("td.title", row);
+					var created = $("td.created", row);
+
+					// If the lesson type has been changed, need to move the row to the proper table.
+					console.log(row.attr("data-type"), lessonType);
+
+					if (row.attr("data-type") != lessonType) {
+						var table;
+						var newRow;
+
+						if (lesson.type == "Principle") {
+							table = $("table.principles");
+						}
+						else if (lesson.type == "Strategy") {
+							table = $("table.strategies");
+						}
+						else {
+							table = $("table.applications");
+						}
+
+						newRow = $("tr.clone", table).clone();
+						newRow.removeClass("clone");
+						newRow.attr("data-id", lesson.id);
+						newRow.attr("data-title", lesson.title);
+						newRow.attr("data-type", lesson.type);
+						$("td.title", newRow).html(lesson.title + editLessonHTML());
+						$("td.created", newRow).html(created.html());
+						$("a.signup", newRow).on("click", lessonSignup);
+						table.prepend(newRow);
+						table.trigger("update");
+
+						row.remove();  // remove old row
+						titleCell = $("td.title", newRow);
+					}
+					
+					else {
+						row.attr("data-title", lesson.title);
+						row.attr("data-type", lesson.type);
+						titleCell.html(title + editLessonHTML());
+					}
+
+					bindLessonEvents();
+
+					$("p.error", form).html(""); // Clear any error messages
+					form[0].reset();  // Clear input field
+					$("section.edit-lesson").dialog("close");
+
+					$("#message-title").html("Lesson " + title + " updated.");
+					$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: { my: "left top", at: "left bottom", of: titleCell }});
+				}
+			}
+		});
 	}
 	
-	function removeLesson(event) {
-		var cell = $(this).parent();
-		var row = cell.parent();
-		var lessonId = row.attr("data-id");
-		var lessonTitle = row.attr("data-title");
-		var lessonType = row.attr("data-type");
-		var section = $("section.delete-lesson");
-		
-		$("#delete-title").html(lessonTitle);
-		
-		section.dialog({ width: 'auto', height: 'auto', title: "Delete?", position: { my: "left top", at: "left bottom", of: cell }});
+	function deleteLesson(event) {
+		event.preventDefault();
+		var form = $(this);
+		var path = form.attr("action");
+		var title = $("input.lesson", form).val();
+		var lessonId = $("input.id", form).val();
+		var csrf = $("input.csrf").val();
+		var row = $('tr[data-id="' + lessonId + '"]');
+		var top = row.position.top;
+		var left = row.position.left;
+
+		$.ajax({
+			url: path,
+			type: 'DELETE',
+			data: { "_csrf": csrf },
+			success: function(data) {
+				if (data.error) {
+					$("p.error").html(data.error);
+				}
+				else {
+					row.remove();
+					$("section.delete-lesson").dialog("close");
+
+					$("#message-title").html("You have delete the lesson " + title + ".");
+					$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: [left, top] });
+				}
+			}
+		});
 	}
 	
 	function bindLessonEvents() {
@@ -320,8 +452,42 @@ $(function() {
 		$("span.glyphicon-edit.lesson").unbind("click");
 		$("span.glyphicon-remove.lesson").unbind("click");
 		
-		$("span.glyphicon-edit.lesson").click(editLesson);
-		$("span.glyphicon-remove.lesson").click(removeLesson);
+		$("span.glyphicon-edit.lesson").click(function(event) {
+			var cell = $(this).parent();
+			var row = cell.parent();
+			var lessonId = row.attr("data-id");
+			var lessonTitle = row.attr("data-title");
+			var lessonType = row.attr("data-type");
+			var section = $("section.edit-lesson");
+
+			$("form.edit-lesson").attr("action", "/lesson/update/" + lessonId);
+			$("input.lesson", section).val(lessonTitle);
+			$("select.lesson-type", section).val(lessonType);
+			
+			$("#edit-title").html(lessonTitle);
+			
+			section.dialog({ width: 'auto', height: 'auto', title: "Delete?", position: { my: "left top", at: "left bottom", of: cell }});
+		});
+
+		$("span.glyphicon-remove.lesson").click(function(event) {
+			var cell = $(this).parent();
+			var row = cell.parent();
+			var lessonId = row.attr("data-id");
+			var lessonTitle = row.attr("data-title");
+			var lessonType = row.attr("data-type");
+			var section = $("section.delete-lesson");
+			
+			$("form.delete-lesson").attr("action", "/lesson/" + lessonId);
+			$("input.lesson", section).val(lessonTitle);
+			$("input.id", section).val(lessonId);
+
+			$("#delete-title").html(lessonTitle);
+			
+			section.dialog({ width: 'auto', height: 'auto', title: "Delete?", position: { my: "left top", at: "left bottom", of: cell }});
+		});
+
+		$("form.edit-lesson").submit(editLesson);
+		$("form.delete-lesson").submit(deleteLesson);
 	}
 	
 	function lessonSignup(event) {
@@ -416,7 +582,7 @@ $(function() {
 						$("input.signup.ok").unbind("click"); // Prevent stacking
 						$("section.signup").dialog("close");
 
-						$("#message-title").html("You have unsigned up.");
+						$("#message-title").html("You have cancelled sign up.");
 						$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: { my: "left top", at: "left bottom", of: cell }});
 					}
 				});
@@ -468,7 +634,6 @@ $(function() {
 				cell.click(addSelectStatus);  // rebind select status
 
 				$("#message-title").html("You have changed the status.");
-				console.log(cell, signupCell);
 				$("section.message").dialog({ width: 'auto', height: 'auto', title: "Success!", position: { my: "left top", at: "left bottom", of: cell }});
 			}
 		});
@@ -663,6 +828,20 @@ $(function() {
 	
 	// Add a new Principle or Strategy Lesson
 	$("form.add-lesson").submit(addLesson);
+
+	$("form.edit-profile").submit(saveProfile);
+
+	$("span.glyphicon-edit.profile").click(function() {
+		$("form.edit-profile").show();
+		$(".view-profile").hide();
+	});
+
+	$("input.profile-cancel").click(function() {
+		$("form.edit-profile").hide();
+		$(".view-profile").show();
+	});
+
+	// $("form.edit-profile").submit();
 	
 	bindLessonEvents();
 	bindUserCancelSignup();

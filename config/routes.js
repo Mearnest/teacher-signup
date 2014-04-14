@@ -61,6 +61,11 @@ module.exports.routes = {
 		controller: 'user',
 		action: 'profile'
 	},
+
+	'/user/update/:id': {
+		controller: 'user',
+		action: 'update'
+	},
 	
 	'/lesson/list': {
 		controller: 'lesson',
@@ -75,6 +80,11 @@ module.exports.routes = {
 	'/lesson/cancel/signup/:id': {
 		controller: 'lesson',
 		action: 'cancelSignup'
+	},
+
+	'/lesson/update/:id': {
+		controller: 'lesson',
+		action: 'update'
 	}
 };
 

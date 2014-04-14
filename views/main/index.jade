@@ -143,6 +143,11 @@ block main
 							if lesson.type == "Strategy"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}", data-type="#{lesson.type}")
 									td.title= lesson.title
+										//- If the user is logged in and they have the admin role or created the lesson, show edit and remove icons.
+										if (user && (user.role == "Admin" || lesson.createdBy == user.fullName))
+											br
+											span.pull-left(class="glyphicon glyphicon-edit lesson") &nbsp;Edit
+											span.pull-right(class="glyphicon glyphicon-remove lesson") &nbsp;Delete
 									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
@@ -205,6 +210,11 @@ block main
 							if lesson.type == "Application"
 								tr(data-id="#{lesson.id}", data-title="#{lesson.title}", data-type="#{lesson.type}")
 									td.title #{lesson.title} #{lesson.parentType}
+										//- If the user is logged in and they have the admin role or created the lesson, show edit and remove icons.
+										if (user && (user.role == "Admin" || lesson.createdBy == user.fullName))
+											br
+											span.pull-left(class="glyphicon glyphicon-edit lesson") &nbsp;Edit
+											span.pull-right(class="glyphicon glyphicon-remove lesson") &nbsp;Delete
 									td.created= new Date(lesson.createdAt).toTFLString()
 									td.script
 										if lesson.script
@@ -285,41 +295,6 @@ block main
 				a(class="login-create-account" href="#create") Create an Account
 				| &nbsp;if you don't already have one.
 
-
-	section.content.profile
-		header.content
-			h2.pull-left My Account
-			p.clearfix
-			
-		.info.user
-			p#fullName
-			p#email
-				a(href="mailto:")
-			p#role 
-			p#school
-		
-		.info.scripts
-			header 
-				span(class="glyphicon glyphicon-folder-close")
-				| &nbsp;&nbsp;
-				| Scripts I've signed-up for.
-				
-			.content
-			
-		.info.videos
-			header
-				span(class="glyphicon glyphicon-facetime-video")
-				| &nbsp;&nbsp;
-				| Videos I've signed-up for.
-			.content
-
-		.info.lessons-created
-			header 
-				span(class="glyphicon glyphicon-film")
-				| &nbsp;&nbsp;
-				| Lessons I've added.
-			.content
-
 	
 	section.contact
 		//- Action defined in javascript to make spam bot job harder.
@@ -353,13 +328,12 @@ block main
 				input.cancel(type="button" value="Cancel")
 				
 	section.edit-lesson
-		form.edit-lesson(method="put", action="/lesson")
+		form.edit-lesson(method="put", action="/lesson/update/")
 			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
 			p
 				input.lesson(type="text", name="title", value="", required autofocus)
 			p Type: &nbsp;&nbsp;
 				select.lesson-type(name="lessonType", required)
-					option(value="") Select
 					option(value="Principle") Principle
 					option(value="Strategy") Strategy
 					option(value="Application") Application
@@ -371,10 +345,17 @@ block main
 				
 	section.delete-lesson
 		#delete-title
-		p
-		input.delete.ok(type="button" value="OK")
-		| &nbsp;&nbsp;
-		input.cancel(type="button" value="Cancel")
+
+		form.delete-lesson(method="delete", action="/lesson/")
+			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
+			input.lesson(type='hidden' name='title')
+			input.id(type='hidden' name='id')
+			
+			p.error
+			p
+				input.delete.ok(type="submit" value="Delete")
+				| &nbsp;&nbsp;
+				input.cancel(type="button" value="Cancel")
 
 	section.signup
 		#signup-title
@@ -386,3 +367,90 @@ block main
 	section.message
 		#message-title
 		input.message.cancel(type="button" value="OK")
+
+
+	section.content.profile
+		header.content
+			h2.pull-left My Account
+			p.clearfix
+			
+		.info.user
+			.view-profile
+				div
+					span.fullName 
+					span(class="glyphicon glyphicon-edit profile") &nbsp;Edit
+				div
+					span.email
+						a(href="mailto:")
+				div
+					span.role
+				div
+					span.school
+
+				
+
+			form.edit-profile(method="put", action="/user")
+				input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
+
+				div 
+					.label-field Name:
+					.field
+						input.firstName(type='text' name='firstName' required)
+						input.lastName(type='text' name='lastName' required)
+
+				div 
+					.label-field Email:
+					.field
+						input.email(type='text' name='email' required)
+
+				div 
+					.label-field Password:
+					.field
+						input.password(type='password' name='password')
+
+				div 
+					.label-field Role:
+					.field
+						select.role(name='role')
+							option(value="Student") Student
+							option(value="Teacher") Teacher
+
+				div 
+					.label-field School:
+					.field
+						select.school(name="school")
+							option(value="Other") Other
+							option(value="Bethel") Bethel
+							option(value="Friends") Friends
+							option(value="McPherson") McPherson
+							option(value="Southwestern") Southwestern
+							option(value="Wichita State") Wichita State
+							option(value="TFL") TFL
+
+				p.error
+				p
+					input.profile.ok(type="submit" value="Save")
+					| &nbsp;&nbsp;
+					input.profile-cancel(type="button" value="Cancel")
+		
+		.info.scripts
+			header 
+				span(class="glyphicon glyphicon-folder-close")
+				| &nbsp;&nbsp;
+				| Scripts I've signed-up for.
+				
+			.content
+			
+		.info.videos
+			header
+				span(class="glyphicon glyphicon-facetime-video")
+				| &nbsp;&nbsp;
+				| Videos I've signed-up for.
+			.content
+
+		.info.lessons-created
+			header 
+				span(class="glyphicon glyphicon-film")
+				| &nbsp;&nbsp;
+				| Lessons I've added.
+			.content

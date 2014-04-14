@@ -137,7 +137,7 @@ module.exports = {
 							});
 						}
 						else {
-							lesson.video = user.fullName + " at " + user.school; 
+							lesson.video = user.fullName + (user.school != 'Other' ? " at " + user.school : ""); 
 							lesson.videoId = user.id;
 							lesson.videoStatus = "In Progress";
 								
@@ -206,6 +206,39 @@ module.exports = {
 					}
 					else {
 						res.json({ "error": "Lesson " + id + " not found." });
+					}
+				});
+			}
+		}
+	},
+
+	update: function(req, res) {
+		if (req.method == "PUT") {
+			if (req.session.user) {
+				var user = req.session.user;
+				var title = req.param("title");
+				var lessonType = req.param("lessonType");
+				var id = req.param("id");
+
+				Lesson.findOne({ "id": id }, function(err, lesson) {
+					if (err) {
+						console.log(err);
+						res.json({ "error": "A server error occurred while attempting to fetch data." });
+					}
+					else {
+						lesson.title = title;
+						lesson.type = lessonType;
+						lesson.save(function(err) {
+							if (err) {
+								console.log(err);
+								res.json({ "error": "A server error occurred while attempting to save the lesson." });
+							}
+							else {
+								res.json({ 'lesson': lesson });
+								// res.json({ 'method':req.method, 'lesson': lesson, 'user': user, 'title': title, 'type': lessonType, 'id': id });
+							}
+						});
+						
 					}
 				});
 			}

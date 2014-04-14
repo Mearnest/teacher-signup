@@ -104,8 +104,12 @@ footer {
 	/* background-color: #7fc8e4; */
 }
 
-section.login, section.register, section.profile, section.contact, section.add-lesson, section.edit-lesson, section.signup, section.message {
+section {
 	display: none;
+}
+
+section.lessons {
+	display: block;
 }
 
 section.message {
@@ -116,9 +120,37 @@ section.message {
 		margin: 10px;
 	}
 
+.view-profile div {
+	height: 30px;
+}
+
+span.glyphicon-edit.profile {
+	margin-left: 20px;
+	padding-left: 5px;
+}
+
+form.edit-profile {
+	display: none;
+}
+
+.label-field {
+	font-weight: 700;	
+	width: 88px;
+}
+
+.label-field, .field {
+	display: inline-block;
+}
+
+.field input {
+	padding-left: 4px;
+}
+
 p.contact.message {
 	display: none;
 }
+
+
 
 div.popup {
 	display: none;

@@ -26,7 +26,7 @@ function checkIfEmail(loginName) {
 }
 
 function setUserSession(user, req) {
-	var sessionUser = { "id": user.id, "firstName": user.firstName, "fullName": user.fullName, "role": user.role, "school": user.school, "url": user.url, "email": user.email };
+	var sessionUser = { "id": user.id, "firstName": user.firstName, "lastName": user.lastName, "fullName": user.fullName, "role": user.role, "school": user.school, "url": user.url, "email": user.email };
 	req.session.user = sessionUser;
 }
 
@@ -194,6 +194,111 @@ module.exports = {
 		}
 		else {
 			res.json({ "error": "User not logged in." });
+		}
+	},
+
+	update: function(req, res) {
+		if (req.method == "PUT") {
+			if (req.session.user) {
+				var user = req.session.user;
+				var firstName = req.param("firstName").trim();
+				var lastName = req.param("lastName").trim();
+				var fullName = firstName + " " + lastName;
+				var email = req.param("email").trim();
+				var password = req.param("password");
+				var role = req.param("role");
+				var school = req.param("school");
+
+				if (firstName == "") {
+					res.json({ "error": "First Name is required." });
+				}
+				else if (lastName == "") {
+					res.json({ "error": "Last Name is required." });
+				}
+				else if (email == "") {
+					res.json({ "error": "Email is required." });
+				}
+				else if (password && password.length < 3) {
+					res.json({ "error": "Password must be at least 3 characters." });
+				}
+				// Validation passed
+				else {
+					console.log("Update user");
+
+					User.findOne({ "id": user.id }, function(err, account) {
+						if (err) {
+							console.log(err);
+							res.json({ "error": "A server error occurred while attempting to fetch data." });
+						}
+						else {
+							// If the user changed their name, need to update Lessons they've created or signed-up form.
+							if (user.fullname != fullName) {
+								account.firstName = firstName;
+								account.lastName = lastName;
+								account.fullName = fullName;
+								account.url = userNameToURL(account.fullName);
+							}
+
+							account.email = email;
+							account.role = role;
+							account.school = school;
+
+							// If the user typed in a new password
+							if (password) {
+								var hasher = require("password-hash");
+								var hashedPassword = hasher.generate(password);
+								account.password = hashedPassword;
+							}
+
+							account.save(function(err) {
+								if (err) {
+									console.log(err);
+									res.json({ "error": "A server error occurred while attempting to update your profile." });
+								}
+								else {
+									res.json({ 'user': account });
+
+									// If the user changed their name, need to update Lessons they've created or signed-up form.
+									if (user.fullName != fullName) {
+										Lesson.update({ "createdBy": user.fullName }, { "createdBy": account.fullName }, function(err, lessons) {
+											if (err) {
+										    	return console.log(err);
+										  	} 
+										  	else {
+										  		console.log("Lessons updated for createdBy.")
+										    	// console.log("Lessons updated:", lessons);
+											}
+										});
+
+										var oldSignup = user.fullName + (user.school != 'Other' ? " at " + user.school : ""); 
+										var newSignup = fullName + (account.school != 'Other' ? " at " + account.school : ""); 
+
+										Lesson.update({ "script": oldSignup }, { "script": newSignup }, function(err, lessons) {
+											if (err) {
+										    	return console.log(err);
+										  	} 
+										  	else {
+										  		console.log("Lessons updated for script.")
+										    	// console.log("Lessons updated:", lessons);
+											}
+										});
+
+										Lesson.update({ "video": oldSignup }, { "video": newSignup }, function(err, lessons) {
+											if (err) {
+										    	return console.log(err);
+										  	} 
+										  	else {
+										  		console.log("Lessons updated for video.")
+										    	// console.log("Lessons updated:", lessons);
+											}
+										});
+									}
+								}
+							});
+						}
+					});
+				}
+			}
 		}
 	},
 	
