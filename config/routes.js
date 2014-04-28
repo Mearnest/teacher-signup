@@ -82,6 +82,11 @@ module.exports.routes = {
 		action: 'cancelSignup'
 	},
 
+	'/lesson/update/status/:id': {
+		controller: 'lesson',
+		action: 'statusUpdate'
+	},
+
 	'/lesson/update/:id': {
 		controller: 'lesson',
 		action: 'update'
