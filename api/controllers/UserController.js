@@ -141,7 +141,17 @@ module.exports = {
 						res.json({ "error": err });
 					}
 					else if (!user) {
-						res.json ({ "error": "No user was found with the name " + loginName + "." });
+						User.findOne({ "firstName": loginName }, function(err, user) {
+							if (err) {
+								res.json({ "error": err });
+							}
+							else if (!user) {
+								res.json ({ "error": "No user was found with the name " + loginName + "." });
+							}
+							else {
+								loginVerifyPass(req, res, user, password, loginName);
+							}
+						});
 					}
 					else {
 						loginVerifyPass(req, res, user, password, loginName);
@@ -223,7 +233,7 @@ module.exports = {
 				}
 				// Validation passed
 				else {
-					console.log("Update user");
+					console.log("Update the user:");
 
 					User.findOne({ "id": user.id }, function(err, account) {
 						if (err) {
@@ -269,7 +279,9 @@ module.exports = {
 										    	// console.log("Lessons updated:", lessons);
 											}
 										});
+									}
 
+									if (user.school != school || user.fullName != fullName) {
 										var oldSignup = user.fullName + (user.school != 'Other' ? " at " + user.school : ""); 
 										var newSignup = fullName + (account.school != 'Other' ? " at " + account.school : ""); 
 
@@ -293,6 +305,10 @@ module.exports = {
 											}
 										});
 									}
+
+									// update the user session
+									setUserSession(account, req);
+									console.log(req.session.user);
 								}
 							});
 						}

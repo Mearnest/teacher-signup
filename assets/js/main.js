@@ -148,8 +148,6 @@ $(function() {
 	}
 
 	function setUserLabels(section, account) {
-		console.log(section, account);
-
 		$("span.fullName", section).html(account.fullName);
 		$("span.email a", section).attr("href", "mailto:" + account.email);
 		$("span.email a", section).text(account.email);
@@ -193,10 +191,10 @@ $(function() {
 					user.role = account.role;
 					user.school = account.school;
 					
-					 refreshLessonList(function() {});
+					refreshLessonList(function(lessons) { console.log(lessons); });
 
 					$("form.edit-profile").hide();
-					$(".view-profile").show();
+					$("div.view-profile").show();
 				}
 			}
 		});
@@ -244,7 +242,7 @@ $(function() {
 						newHtml = "";
 						if (lesson.script) {
 							newHtml = lesson.script;
-							if (lesson.scriptStatus != "Completed" && (user && lesson.script.match(user.fullName))) {
+							if ((user && user.role == 'Admin') || (lesson.scriptStatus != "Completed" && (user && lesson.script.match(user.fullName)))) {
 								newHtml += cancelSignupHTML();
 							}
 
@@ -257,7 +255,7 @@ $(function() {
 						newHtml = "";
 						if (lesson.video) {
 							newHtml = lesson.video;
-							if (lesson.videoStatus != "Completed" && (user && lesson.video.match(user.fullName))) {
+							if ((user && user.role == 'Admin') || (lesson.videoStatus != "Completed" && (user && lesson.video.match(user.fullName)))) {
 								newHtml += cancelSignupHTML();
 							}
 
@@ -276,7 +274,7 @@ $(function() {
 				$("a.signup").click(lessonSignup);
 				bindUserCancelSignup();
 
-				callback(); // show/hide relevant sections and divs
+				callback(data.lessons); // show/hide relevant sections and divs
 			}
 		});
 	}
@@ -396,6 +394,9 @@ $(function() {
 
 						row.remove();  // remove old row
 						titleCell = $("td.title", newRow);
+
+						// Scroll the cell into view.
+						window.scrollTo(titleCell.offset().left, titleCell.offset().top);
 					}
 					
 					else {
@@ -595,7 +596,7 @@ $(function() {
 		var statusField = $(this);
 		var status = statusField.val();
 		var lessonId = cell.parent().attr("data-id");
-		var path = "/lesson/" + lessonId;
+		var path = "/lesson/update/status/" + lessonId;
 		var update = { "_csrf": $("input.csrf").val() };
 		
 		if (cell.hasClass("script-status")) {

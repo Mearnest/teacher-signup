@@ -79,7 +79,7 @@ block main
 									td.script
 										if lesson.script
 											| #{lesson.script}
-											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
@@ -90,7 +90,7 @@ block main
 									td.video
 										if lesson.video
 											| #{lesson.video}
-											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
@@ -152,7 +152,7 @@ block main
 									td.script
 										if lesson.script
 											| #{lesson.script}
-											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
@@ -163,7 +163,7 @@ block main
 									td.video
 										if lesson.video
 											| #{lesson.video}
-											if (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.scriptStatus != "Completed") && (user && lesson.video.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
@@ -219,7 +219,7 @@ block main
 									td.script
 										if lesson.script
 											| #{lesson.script}
-											if (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.scriptStatus != "Completed") && (user && lesson.script.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.scriptStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="script")
@@ -230,7 +230,7 @@ block main
 									td.video
 										if lesson.video
 											| #{lesson.video}
-											if (lesson.videoStatus != "Completed") && (user && lesson.video.match(user.fullName))
+											if (user && user.role == 'Admin') || (lesson.videoStatus != "Completed") && (user && lesson.video.match(user.fullName))
 												span.pull-right(class="glyphicon glyphicon-remove status")
 										else if lesson.videoStatus != "Completed"
 											a.signup.btn.btn-default(href="#signup", data-type="video")
@@ -282,7 +282,7 @@ block main
 		form.login(method="post")
 			input.csrf(type='hidden' name='_csrf' value='#{_csrf}')
 			p
-				input#login-name(type="text", name="loginName", placeholder="full name or email", required, autofocus)
+				input#login-name(type="text", name="loginName", placeholder="name or email", required, autofocus)
 			p
 				input#login-password(type="password", name="password", placeholder="password", required)
 			p

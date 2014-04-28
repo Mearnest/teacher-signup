@@ -238,7 +238,44 @@ module.exports = {
 								// res.json({ 'method':req.method, 'lesson': lesson, 'user': user, 'title': title, 'type': lessonType, 'id': id });
 							}
 						});
+					}
+				});
+			}
+		}
+	},
+
+	statusUpdate: function(req, res) {
+		if (req.method == "PUT") {
+			if (req.session.user) {
+				var user = req.session.user;
+				var id = req.param("id");
+				var scriptStatus = req.param("scriptStatus");
+				var videoStatus = req.param("videoStatus");
+
+				res.json({ 'user': user, 'id': id, 'script status': scriptStatus, 'video status': videoStatus });
+
+				Lesson.findOne({ "id": id }, function(err, lesson) {
+					if (err) {
+						console.log(err);
+						res.json({ "error": "A server error occurred while attempting to fetch data." });
+					}
+					else {
+						if (scriptStatus || scriptStatus === "") {
+							lesson.scriptStatus = scriptStatus;
+						}
+						else if (videoStatus || videoStatus === "") {
+							lesson.videoStatus = videoStatus;
+						}
 						
+						lesson.save(function(err) {
+							if (err) {
+								console.log(err);
+								res.json({ "error": "A server error occurred while attempting to save the lesson." });
+							}
+							else {
+								res.json({ 'lesson': lesson });
+							}
+						});
 					}
 				});
 			}
